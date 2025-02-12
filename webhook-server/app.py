@@ -7,10 +7,10 @@ app = Flask(__name__)
 
 # MinIO-Client initialisieren
 client = Minio(
-    "minio:9000",  # Ersetzen Sie dies durch Ihren MinIO-Server-Endpunkt
+    "minio:9000",  # MinIO Server Endpunkt -> docker compose service name + port
     access_key="aumpB204wspLZO3w2RND",
     secret_key="mHXwzhY5ZziL33qqYPuAaHdTkh56Oms2WHeDU5Ay",
-    secure=False  # Setzen Sie dies auf True, wenn Sie HTTPS verwenden
+    secure=False  # True, wenn HTTPS
 )
 # Log-Level auf INFO setzen
 app.logger.setLevel(logging.INFO)
