@@ -1,0 +1,32 @@
+# Copyright Broadcom, Inc. All Rights Reserved.
+# SPDX-License-Identifier: APACHE-2.0
+
+services:
+  minio:
+    image: 'bitnami/minio:latest'
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    environment:
+      - MINIO_ROOT_USER=minio-root-user
+      - MINIO_ROOT_PASSWORD=minio-root-password
+      - MINIO_SERVER_ACCESS_KEY=aumpB204wspLZO3w2RND
+      - MINIO_SERVER_SECRET_KEY=mHXwzhY5ZziL33qqYPuAaHdTkh56Oms2WHeDU5Ay
+    networks:
+      - app-tier
+    volumes:
+      - './minio_data:/bitnami/minio/data'
+  webhook-server:
+    build: 
+      context: webhook-server
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    networks:
+      - app-tier
+    volumes:
+      - ./webhook-server:/app
+
+networks:
+  app-tier:
+    driver: bridge
