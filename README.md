@@ -56,4 +56,4 @@ Copy a file to minio
 mc cp README.md myminio/mybucket/pfad1/README_1.md
 ```
 
-Verify file copied AND 
+Verify file copied to mybucket/pfad1/README_1.md AND also to mybucket/zweiter-pfad/README_1.md 
