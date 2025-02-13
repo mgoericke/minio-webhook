@@ -1,6 +1,7 @@
 from flask import Flask, request
 from minio import Minio
 from minio.commonconfig import CopySource
+from urllib.parse import unquote
 import logging
 
 app = Flask(__name__)
@@ -8,8 +9,8 @@ app = Flask(__name__)
 # MinIO-Client initialisieren
 client = Minio(
     "minio:9000",  # MinIO Server Endpunkt -> docker compose service name + port
-    access_key="aumpB204wspLZO3w2RND",
-    secret_key="mHXwzhY5ZziL33qqYPuAaHdTkh56Oms2WHeDU5Ay",
+    access_key="minioadmin",
+    secret_key="minioadmin",
     secure=False  # True, wenn HTTPS
 )
 # Log-Level auf INFO setzen
@@ -22,21 +23,20 @@ def handle_minio_event():
 
     # Extrahieren der relevanten Informationen aus dem Event
     bucket = event['Records'][0]['s3']['bucket']['name']
-    #object_key = event['Records'][0]['s3']['object']['key']
-    object_key = event['Records'][0]['s3']['object']['key']    
-    new_object_key = "zweiter-pfad/" + object_key.split("/")[-1]
+    object_key = event['Records'][0]['s3']['object']['key']
+    decoded_object_key = unquote(object_key)    
+    new_object_key = "zweiter-pfad/" + decoded_object_key.split("/")[-1]
 
     app.logger.info("bucket: %s", bucket)
-    app.logger.info("object_key: %s", object_key)
+    app.logger.info("object_key: %s", decoded_object_key)
     app.logger.info("new_object_key: %s", new_object_key)
 
     # Kopieren des Objekts mit dem MinIO Python SDK
     try:
-        copy_source = CopySource(bucket, object_key)
+        copy_source = CopySource(bucket, decoded_object_key)
         client.copy_object(bucket, new_object_key, copy_source)
-        print(f"Objekt erfolgreich von {object_key} nach {new_object_key} kopiert.")
+        print(f"Objekt erfolgreich von {decoded_object_key} nach {new_object_key} kopiert.")
     except Exception as err:
-        print(f"Fehler beim Kopieren des Objekts: {err}")
         app.logger.error("Fehler beim Kopieren des Objekts: %s", err)
         return "Fehler", 500
 

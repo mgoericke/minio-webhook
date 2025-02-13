@@ -8,10 +8,11 @@ services:
       - '9000:9000'
       - '9001:9001'
     environment:
-      - MINIO_ROOT_USER=minio-root-user
-      - MINIO_ROOT_PASSWORD=minio-root-password
-      - MINIO_SERVER_ACCESS_KEY=aumpB204wspLZO3w2RND
-      - MINIO_SERVER_SECRET_KEY=mHXwzhY5ZziL33qqYPuAaHdTkh56Oms2WHeDU5Ay
+      # https://min.io/docs/minio/linux/administration/identity-access-management/minioadmin-management.html
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
     networks:
       - app-tier
     volumes:
