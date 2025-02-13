@@ -1,22 +1,59 @@
+# minio webhook demo
+
+Start the application:
+
+```shell
+docker compose up
+```
+
+login to minio console http://localhost:9000 as minioadmin/minioadmin
+
+
 install minio client:
 
-```
+```shell
+# osx
 brew install minio/stable/mc
 ```
 
-```
-bash +o history
-mc alias set myminio http://localhost:9000 aumpB204wspLZO3w2RND mHXwzhY5ZziL33qqYPuAaHdTkh56Oms2WHeDU5Ay
-bash -o history
+Create an alias to work with the locally running minio instance
+```shell
+mc alias set myminio http://localhost:9000 minioadmin minioadmin
 ```
 
-```
+Register the webhook
+```shell
 # docker network url to webhook server
 mc admin config set myminio/ notify_webhook:1 endpoint="http://webhook-server:5001/webhook"
-#mc admin service restart myminio
-mc event add myminio/meinbucket arn:minio:sqs::1:webhook --event "put"
 ```
 
+Restart minio
+
+```shell
+docker compose down
+docker compose up
 ```
-mc cp README.md myminio/meinbucket/pfad1/README_1.md
+
+Create a bucket:
+```shell
+mc mb myminio/mybucket
 ```
+
+Enable notifications for the bucket
+```shell
+mc event add myminio/mybucket arn:minio:sqs::1:webhook --event "put"
+```
+
+
+verify webhook destination was successfully created:
+
+* login to minio console http://localhost:9000 as minioadmin/minioadmin
+* Events -> Event Destination webhook:1 is only
+
+
+Copy a file to minio
+```shell
+mc cp README.md myminio/mybucket/pfad1/README_1.md
+```
+
+Verify file copied AND 
